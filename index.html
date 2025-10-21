@@ -12,8 +12,8 @@
     }
 
     body, html {
-      height: 300vh;
-      overflow-x: hidden;
+      height: 100vh;
+      overflow: hidden;
       background: #000;
       font-family: 'Arial', sans-serif;
     }
@@ -44,6 +44,7 @@
       transition: opacity 0.8s ease;
     }
 
+    /* ✅ Estilo del botón "Ver manual" con animación */
     .scroll-indicator {
       position: fixed;
       bottom: 50px;
@@ -53,15 +54,29 @@
       font-size: 1.2rem;
       text-align: center;
       z-index: 30;
-      opacity: 1;
-      animation: bounce 2s infinite;
       background: rgba(0, 0, 0, 0.7);
       padding: 15px 25px;
       border-radius: 30px;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: bounce 2s infinite;
+      opacity: 1; /* Aseguramos que esté visible inicialmente */
     }
 
+    .scroll-indicator:hover {
+      background: rgba(0, 0, 0, 0.8);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    .scroll-indicator:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      animation: none;
+    }
+
+    /* ✅ Animación de bounce (salto) */
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% {
         transform: translateX(-50%) translateY(0);
@@ -74,49 +89,10 @@
       }
     }
 
-    #content {
-      position: relative;
-      top: 100vh;
-      padding: 4rem 2rem;
-      max-width: 800px;
-      margin: 0 auto;
-      color: white;
-      line-height: 1.6;
-    }
-
-    .content-section {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 3rem;
-      border-radius: 20px;
-      margin: 3rem 0;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    h2 {
-      font-size: 2.8rem;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 200% 200%;
-      animation: gradientShift 3s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-    }
-
-    p {
-      font-size: 1.3rem;
-      opacity: 0.9;
-      line-height: 1.8;
+    /* ✅ Clase para desvanecer el botón */
+    .fade-out-btn {
+      opacity: 0 !important;
+      transition: opacity 0.5s ease !important;
     }
   </style>
 </head>
@@ -125,69 +101,35 @@
     <div id="full-image"></div>
   </div>
 
-  <div class="scroll-indicator">
-    ⬇️ Desplázate hacia abajo ⬇️
-  </div>
-
-  <div id="content">
-    <div class="content-section">
-      <h2>Bienvenido</h2>
-      <p>El contenido aparece suavemente mientras la imagen se desvanece</p>
-    </div>
-    
-    <div class="content-section">
-      <h2>Contenido Principal</h2>
-      <p>Desplázate para descubrir más información</p>
-    </div>
-    
-    <div class="content-section">
-      <h2>Explora</h2>
-      <p>Sigue desplazándote para ver todo el contenido</p>
-    </div>
-  </div>
+  <!-- ✅ Botón con animación de salto -->
+  <button class="scroll-indicator" id="ver-manual-btn">
+    Ver manual
+  </button>
 
   <script>
     const fullImage = document.getElementById('full-image');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
+    const btn = document.getElementById('ver-manual-btn');
 
-    function handleScroll() {
-      const scrollY = window.scrollY;
-      const maxScroll = 600;
-      const progress = Math.min(scrollY / maxScroll, 1);
-      
-      // Desvanecer la imagen según el scroll
-      fullImage.style.opacity = `${1 - progress}`;
-      
-      // Ocultar el indicador cuando se empiece a hacer scroll
-      if (scrollY > 100) {
-        scrollIndicator.style.opacity = '0';
-        scrollIndicator.style.transition = 'opacity 0.5s ease';
-      } else {
-        scrollIndicator.style.opacity = '1';
-      }
-      
-      // Ocultar completamente el hero cuando el scroll sea máximo
-      if (progress >= 0.95) {
-        document.getElementById('hero').style.pointerEvents = 'none';
-      } else {
-        document.getElementById('hero').style.pointerEvents = 'auto';
-      }
-    }
+    // 🔁 Reemplaza esta URL por la de tu página pública de Notion
+    const NOTION_URL = 'https://hazel-raven-4b6.notion.site/2930192e91b580c599eccbcf7e934489?source=copy_link';
 
-    // Optimizar evento de scroll
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-      if (!scrollTimeout) {
-        scrollTimeout = setTimeout(() => {
-          handleScroll();
-          scrollTimeout = null;
-        }, 16);
-      }
-    });
+    btn.addEventListener('click', () => {
+      // Desactivar botón para evitar múltiples clics
+      btn.disabled = true;
 
-    // Inicializar
-    window.addEventListener('load', () => {
-      fullImage.style.opacity = '1';
+      // ✅ Detener la animación de bounce
+      btn.style.animation = 'none';
+
+      // ✅ Desvanecer el botón
+      btn.classList.add('fade-out-btn');
+
+      // ✅ Desvanecer la imagen
+      fullImage.style.opacity = '0';
+
+      // ✅ Redirigir después de las animaciones
+      setTimeout(() => {
+        window.location.href = NOTION_URL;
+      }, 800);
     });
   </script>
 </body>
